@@ -37,7 +37,7 @@ func GetTags(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
-		"msg": e.GetMsg(code),
+		"msg":  e.GetMsg(code),
 		"data": data,
 	})
 }
@@ -69,7 +69,7 @@ func AddTag(c *gin.Context) {
 		return
 	}
 
-	if tag, err := models.AddTag(name, state, createdBy); err != nil{
+	if tag, err := models.AddTag(name, state, createdBy); err != nil {
 		c.JSON(e.ERROR, gin.H{
 			"msg": err,
 		})
@@ -95,12 +95,12 @@ func EditTag(c *gin.Context) {
 	}
 
 	valid.Required(id, "id").Message("ID不能为空")
-	valid.Required(modifiedBy, "modified_by").Message("修改人不能为空")
-	valid.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
+	valid.Required(modifiedBy, "modifiedBy").Message("修改人不能为空")
+	valid.MaxSize(modifiedBy, 100, "modifiedBy").Message("修改人最长为100字符")
 	valid.MaxSize(name, 100, "name").Message("名称最长为100字符")
 
 	code := e.InvalidParams
-	if ! valid.HasErrors() {
+	if !valid.HasErrors() {
 		code = e.SUCCESS
 		if models.ExistTagByID(id) {
 			data := make(map[string]interface{})
@@ -111,7 +111,6 @@ func EditTag(c *gin.Context) {
 			if state != -1 {
 				data["state"] = state
 			}
-
 			models.EditTag(id, data)
 		} else {
 			code = e.ErrorExistTag
@@ -119,9 +118,9 @@ func EditTag(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code" : code,
-		"msg" : e.GetMsg(code),
-		"data" : make(map[string]string),
+		"code": code,
+		"msg":  e.GetMsg(code),
+		"data": make(map[string]string),
 	})
 }
 
@@ -133,20 +132,18 @@ func DeleteTag(c *gin.Context) {
 	valid.Min(id, 1, "id").Message("ID必须大于0")
 
 	code := e.InvalidParams
-	if ! valid.HasErrors() {
+	if !valid.HasErrors() {
 		code = e.SUCCESS
 		if models.ExistTagByID(id) {
-			data := make(map[string]interface{})
-			data["is_deleted"] = 1
-			models.DeleteTag(id, data)
+			models.DeleteTag(id)
 		} else {
 			code = e.ErrorNotExistTag
 		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code" : code,
-		"msg" : e.GetMsg(code),
-		"data" : make(map[string]string),
+		"code": code,
+		"msg":  e.GetMsg(code),
+		"data": make(map[string]string),
 	})
 }

@@ -6,7 +6,7 @@ CREATE TABLE `blog_tag` (
   `created_by` varchar(100) DEFAULT '' COMMENT '创建人',
   `modified_on` datetime(0) DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `modified_by` varchar(100) DEFAULT '' COMMENT '修改人',
-  `is_deleted` int(10) unsigned DEFAULT '0',
+  `is_deleted` tinyint(1) unsigned DEFAULT '0',
   `state` tinyint(1) unsigned DEFAULT '1' COMMENT '状态 0为禁用、1为启用',
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic COMMENT='文章标签管理';

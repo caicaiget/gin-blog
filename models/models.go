@@ -13,9 +13,9 @@ import (
 var db *gorm.DB
 
 type Model struct {
-	ID         int `gorm:"primary_key" json:"id"`
-	CreatedOn  string `json:"created_on"`
-	ModifiedOn string `json:"modified_on"`
+	ID         int    `gorm:"primary_key" json:"id"`
+	CreatedOn  string `json:"createdOn"`
+	ModifiedOn string `json:"modifiedOn"`
 }
 
 func init() {
@@ -47,7 +47,7 @@ func init() {
 	}
 
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return tablePrefix + defaultTableName;
+		return tablePrefix + defaultTableName
 	}
 
 	db.SingularTable(true)
