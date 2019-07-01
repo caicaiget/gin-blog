@@ -51,10 +51,10 @@
 			"revisionTime": "2019-06-20T18:01:02Z"
 		},
 		{
-			"checksumSHA1": "q9bsaNA05ney3eon3nKAE+eLwO4=",
-			"path": "github.com/fvbock/endless",
-			"revision": "447134032cb6a86814f570257390a379982dfc61",
-			"revisionTime": "2017-01-09T17:00:31Z"
+			"checksumSHA1": "/wseY6oofJqnvYP5hoMYSGCIU9A=",
+			"path": "github.com/gin-contrib/cors",
+			"revision": "5f50d4fb4e0306dcacc6f8e9bea2dcee784dbbdf",
+			"revisionTime": "2019-05-09T02:00:32Z"
 		},
 		{
 			"checksumSHA1": "qlEzrgKgIkh7y0ePm9BNo1cNdXo=",
@@ -63,28 +63,28 @@
 			"revisionTime": "2019-06-02T15:02:53Z"
 		},
 		{
-			"checksumSHA1": "DbMrtvSsjy/ATEfTkJZAuU3lHXY=",
+			"checksumSHA1": "CUV7lu+f9bu01n1tOR+edeQmt2Q=",
 			"path": "github.com/gin-gonic/gin",
-			"revision": "09a3650c97ca7ef3a542d428a9fb2c8da8c18002",
-			"revisionTime": "2019-06-18T11:49:10Z"
+			"revision": "6f7276fdc1d3cfad2052ba770382afd2f4d41dbf",
+			"revisionTime": "2019-06-30T00:55:09Z"
 		},
 		{
-			"checksumSHA1": "92+88KRCecT1WXcl1n/ydReNcEg=",
+			"checksumSHA1": "KV3eqfd5g1kQ6xUyv6tdan2Jgmo=",
 			"path": "github.com/gin-gonic/gin/binding",
-			"revision": "09a3650c97ca7ef3a542d428a9fb2c8da8c18002",
-			"revisionTime": "2019-06-18T11:49:10Z"
+			"revision": "6f7276fdc1d3cfad2052ba770382afd2f4d41dbf",
+			"revisionTime": "2019-06-30T00:55:09Z"
 		},
 		{
 			"checksumSHA1": "rST0S8cuVbM57VmJhWXhKNUkKTc=",
 			"path": "github.com/gin-gonic/gin/internal/json",
-			"revision": "09a3650c97ca7ef3a542d428a9fb2c8da8c18002",
-			"revisionTime": "2019-06-18T11:49:10Z"
+			"revision": "6f7276fdc1d3cfad2052ba770382afd2f4d41dbf",
+			"revisionTime": "2019-06-30T00:55:09Z"
 		},
 		{
 			"checksumSHA1": "4XLWNQHHCyHJCCROC4UXSn7U1OM=",
 			"path": "github.com/gin-gonic/gin/render",
-			"revision": "09a3650c97ca7ef3a542d428a9fb2c8da8c18002",
-			"revisionTime": "2019-06-18T11:49:10Z"
+			"revision": "6f7276fdc1d3cfad2052ba770382afd2f4d41dbf",
+			"revisionTime": "2019-06-30T00:55:09Z"
 		},
 		{
 			"checksumSHA1": "NLxrIei+y/HFTknuxPZB0G5UJxk=",
@@ -177,16 +177,34 @@
 			"revisionTime": "2019-02-27T00:00:51Z"
 		},
 		{
+			"checksumSHA1": "ovPv1bTKJGd8h4Le4lrm/XNOwv8=",
+			"path": "github.com/swaggo/gin-swagger",
+			"revision": "ddb15761267c07109d8249ad8230df5ecf94c1c7",
+			"revisionTime": "2019-06-13T07:24:37Z"
+		},
+		{
+			"checksumSHA1": "A1gNAXglJwicLgCC7OIE7+a6KyQ=",
+			"path": "github.com/swaggo/gin-swagger/swaggerFiles",
+			"revision": "ddb15761267c07109d8249ad8230df5ecf94c1c7",
+			"revisionTime": "2019-06-13T07:24:37Z"
+		},
+		{
 			"checksumSHA1": "IxVbOIgnab7gN8+6yTqaqR/q4kI=",
 			"path": "github.com/swaggo/swag",
 			"revision": "e868ec01e1e9a9da2666dc8a4e779159e3e545b4",
 			"revisionTime": "2019-06-28T03:56:01Z"
 		},
 		{
-			"checksumSHA1": "ETfcClZRi59y2PPZdG/09ww4BO0=",
+			"checksumSHA1": "kKa1MtER2IFSTiN5CcPSVVbsPaU=",
 			"path": "github.com/ugorji/go/codec",
-			"revision": "7865e43e776b01f708871ba4d37a9ed1d3353bfd",
-			"revisionTime": "2019-06-16T12:05:23Z"
+			"revision": "4a058356f93d4fea0d182433e748a3a76bf2bcda",
+			"revisionTime": "2019-06-29T10:33:22Z"
+		},
+		{
+			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
+			"path": "golang.org/x/net/context",
+			"revision": "3b0461eec859c4b73bb64fdc8285971fd33e3938",
+			"revisionTime": "2019-06-20T19:42:36Z"
 		},
 		{
 			"checksumSHA1": "vL6l4FZWitsxht0uqA/GpDNkNNc=",
@@ -195,10 +213,22 @@
 			"revisionTime": "2019-06-20T19:42:36Z"
 		},
 		{
-			"checksumSHA1": "syjL4XkD2RVPfuYnxoRggCmpY/k=",
+			"checksumSHA1": "cA0PBfPNFIs6NrIR+cnGAIMKN1M=",
+			"path": "golang.org/x/net/webdav",
+			"revision": "3b0461eec859c4b73bb64fdc8285971fd33e3938",
+			"revisionTime": "2019-06-20T19:42:36Z"
+		},
+		{
+			"checksumSHA1": "XgtZlzd39qIkBHs6XYrq9dhTCog=",
+			"path": "golang.org/x/net/webdav/internal/xml",
+			"revision": "3b0461eec859c4b73bb64fdc8285971fd33e3938",
+			"revisionTime": "2019-06-20T19:42:36Z"
+		},
+		{
+			"checksumSHA1": "REF/X+PvlprkLO5V6dT8j3kRByk=",
 			"path": "golang.org/x/sys/unix",
-			"revision": "15dcb6c0061f497a3f66e3ea034b629c6dd4d99e",
-			"revisionTime": "2019-06-15T12:11:14Z"
+			"revision": "04f50cda93cbb67f2afa353c52f342100e80e625",
+			"revisionTime": "2019-06-26T21:29:17Z"
 		},
 		{
 			"checksumSHA1": "CbpjEkkOeh0fdM/V8xKDdI0AA88=",

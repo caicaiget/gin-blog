@@ -235,14 +235,14 @@ func (fastpathT) {{ .MethodNamePfx "Enc" false }}V(v map[{{ .MapKey }}]{{ .Elem 
 		sort.Sort({{ sorttype .MapKey false}}(v2))
 		for _, k2 := range v2 {
 			e.mapElemKey()
-			{{if eq .MapKey "string"}} if e.h.StringToRaw {e.e.EncodeStringBytesRaw(bytesView(k2))} else {e.e.EncodeStringEnc(cUTF8, k2)} {{else}}{{ $y := printf "%s(k2)" .MapKey }}{{if eq $x .MapKey }}{{ $y = "k2" }}{{end}}{{ encmd .MapKey $y }}{{end}}
+			{{if eq .MapKey "string"}} e.e.EncodeString(k2) {{else}}{{ $y := printf "%s(k2)" .MapKey }}{{if eq $x .MapKey }}{{ $y = "k2" }}{{end}}{{ encmd .MapKey $y }}{{end}}
 			e.mapElemValue()
 			{{ $y := printf "v[%s(k2)]" .MapKey }}{{if eq $x .MapKey }}{{ $y = "v[k2]" }}{{end}}{{ encmd .Elem $y }}
 		} {{end}}
 	} else { 
 		for k2, v2 := range v {
 			e.mapElemKey()
-			{{if eq .MapKey "string"}} if e.h.StringToRaw {e.e.EncodeStringBytesRaw(bytesView(k2))} else {e.e.EncodeStringEnc(cUTF8, k2)} {{else}}{{ encmd .MapKey "k2"}}{{end}}
+			{{if eq .MapKey "string"}} e.e.EncodeString(k2) {{else}}{{ encmd .MapKey "k2"}}{{end}}
 			e.mapElemValue()
 			{{ encmd .Elem "v2"}}
 		}
@@ -367,7 +367,7 @@ func (fastpathT) {{ .MethodNamePfx "Dec" false }}Y(v []{{ .Elem }}, d *Decoder) 
 		}
 	}
 	var j int
-	for j = 0; (hasLen && j < containerLenS) || !(hasLen || d.d.CheckBreak()); j++ {
+	for j = 0; (hasLen && j < containerLenS) || !(hasLen || d.checkBreak()); j++ {
 		if j == 0 && len(v) == 0 {
 			if hasLen {
 				xlen = decInferLen(containerLenS, d.h.MaxInitLen, {{ .Size }})
@@ -411,7 +411,7 @@ func (fastpathT) {{ .MethodNamePfx "Dec" false }}N(v []{{ .Elem }}, d *Decoder) 
 		return
 	}
 	hasLen := containerLenS > 0
-	for j := 0; (hasLen && j < containerLenS) || !(hasLen || d.d.CheckBreak()); j++ {
+	for j := 0; (hasLen && j < containerLenS) || !(hasLen || d.checkBreak()); j++ {
 		{{/* // if indefinite, etc, then expand the slice if necessary */ -}}
 		if j >= len(v) {
 			fastpathDecArrayCannotExpand(slh, hasLen, len(v), j, containerLenS)
@@ -439,7 +439,7 @@ func fastpathDecArrayCannotExpand(slh decSliceHelper, hasLen bool, lenv, j, cont
 	slh.ElemContainerState(j)
 	slh.d.swallow()
 	j++
-	for ; (hasLen && j < containerLenS) || !(hasLen || slh.d.d.CheckBreak()); j++ {
+	for ; (hasLen && j < containerLenS) || !(hasLen || slh.d.checkBreak()); j++ {
 		slh.ElemContainerState(j)
 		slh.d.swallow()
 	}
@@ -517,7 +517,7 @@ func (fastpathT) {{ .MethodNamePfx "Dec" false }}L(v map[{{ .MapKey }}]{{ .Elem 
     var mk {{ .MapKey }}
 	var mv {{ .Elem }}
 	hasLen := containerLen > 0
-	for j := 0; (hasLen && j < containerLen) || !(hasLen || d.d.CheckBreak()); j++ {
+	for j := 0; (hasLen && j < containerLen) || !(hasLen || d.checkBreak()); j++ {
 		d.mapElemKey()
 		{{ if eq .MapKey "interface{}" }}mk = nil 
 		d.decode(&mk)

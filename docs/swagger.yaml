@@ -1,27 +1,29 @@
 basePath: '{{.BasePath}}'
-host: '{{.Host}}'
+host: 127.0.0.1:8000
 info:
   contact: {}
-  description: '{{.Description}}'
-  license: {}
-  title: '{{.Title}}'
-  version: '{{.Version}}'
+  description: An example of gin
+  license:
+    name: caicai
+    url: https://erry.io
+  termsOfService: https://erry.io
+  title: Golang Gin API
+  version: "1.0"
 paths:
   /api/v1/tags:
-    post:
+    get:
       parameters:
-      - description: Name
+      - description: name
         in: query
         name: name
-        required: true
         type: string
-      - description: State
+      - description: state
         in: query
         name: state
         type: integer
-      - description: CreatedBy
+      - description: createdBy
         in: query
-        name: created_by
+        name: state
         type: integer
       produces:
       - application/json
@@ -30,5 +32,9 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: 新增文章标签
+        "500":
+          description: '{"code":500,"data":{},"msg":"error"}'
+          schema:
+            type: string
+      summary: Get multiple article tags
 swagger: "2.0"

@@ -28,7 +28,7 @@ if z.DecBasicHandle().MapValueReset {
 	{{end}} }
 if {{var "l"}} != 0 {
 	{{var "hl"}} := {{var "l"}} > 0 
-	for {{var "j"}} := 0; ({{var "hl"}} && {{var "j"}} < {{var "l"}}) || !({{var "hl"}} || r.CheckBreak()); {{var "j"}}++ {
+	for {{var "j"}} := 0; ({{var "hl"}} && {{var "j"}} < {{var "l"}}) || !({{var "hl"}} || z.DecCheckBreak()); {{var "j"}}++ {
 	z.DecReadMapElemKey() {{/* z.DecSendContainerState(codecSelfer_containerMapKey{{ .Sfx }}) */}}
 	{{ $x := printf "%vmk%v" .TempVar .Rand }}{{ decLineVarK $x -}}
 	{{ if eq .KTyp "interface{}" }}{{/* // special case if a byte array. */ -}}
@@ -109,7 +109,7 @@ if {{var "l"}} == 0 {
     {{end -}}
 	var {{var "j"}} int 
     {{/* // var {{var "dn"}} bool */ -}}
-	for {{var "j"}} = 0; ({{var "hl"}} && {{var "j"}} < {{var "l"}}) || !({{var "hl"}} || r.CheckBreak()); {{var "j"}}++ { // bounds-check-elimination
+	for {{var "j"}} = 0; ({{var "hl"}} && {{var "j"}} < {{var "l"}}) || !({{var "hl"}} || z.DecCheckBreak()); {{var "j"}}++ { // bounds-check-elimination
 		{{if not isArray}} if {{var "j"}} == 0 && {{var "v"}} == nil {
 			if {{var "hl"}} {
 				{{var "rl"}} = z.DecInferLen({{var "l"}}, z.DecBasicHandle().MaxInitLen, {{ .Size }})
@@ -125,7 +125,6 @@ if {{var "l"}} == 0 {
         {{if isChan}}{{ $x := printf "%[1]vvcx%[2]v" .TempVar .Rand }}var {{$x}} {{ .Typ }}
 		{{ decLineVar $x -}}
 		{{var "v"}} <- {{ $x }}
-        // println(">>>> sending ", {{ $x }}, " into ", {{var "v"}}) // TODO: remove this
         {{else}}{{/* // if indefinite, etc, then expand the slice if necessary */ -}}
 		var {{var "db"}} bool
 		if {{var "j"}} >= len({{var "v"}}) {

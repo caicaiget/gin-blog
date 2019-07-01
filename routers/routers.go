@@ -1,12 +1,12 @@
 package routers
 
 import (
-	"gin-blog/middleware/jwt"
 	"gin-blog/pkg/setting"
 	"gin-blog/routers/api"
 	"gin-blog/routers/api/v1"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
@@ -19,9 +19,12 @@ func InitRouter() *gin.Engine {
 
 	gin.SetMode(setting.RunMode)
 	r.POST("/api/auth", api.GetAuth)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	ginConfig := ginSwagger.Config{}
+	ginConfig.URL = "doc.json"
+	r.GET("/swagger/*any", ginSwagger.CustomWrapHandler(&ginConfig, swaggerFiles.Handler))
 	apiv1 := r.Group("/api/v1")
-	apiv1.Use(jwt.JWT())
+	//apiv1.Use(jwt.JWT())
+	r.Use(cors.Default())
 	{
 		//获取标签列表
 		apiv1.GET("/tags", v1.GetTags)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	_ "gin-blog/docs"
 	"gin-blog/pkg/setting"
 	"gin-blog/routers"
 	"github.com/gin-gonic/gin"
@@ -9,16 +10,21 @@ import (
 	"net/http"
 )
 
+// @title Golang Gin API
+// @version 1.0
+// @description An example of gin
+// @termsOfService https://erry.io
+// @license.name caicai
+// @license.url https://erry.io
+// @host 127.0.0.1:8000
 func main() {
 
 	gin.SetMode(setting.RunMode)
-
 	routersInit := routers.InitRouter()
-	readTimeout := setting.ExpireTime
-	writeTimeout := setting.ReadTimeout
+	readTimeout := setting.ReadTimeout
+	writeTimeout := setting.WriteTimeout
 	endPoint := fmt.Sprintf(":%d", setting.HTTPPort)
 	maxHeaderBytes := 1 << 20
-
 	server := &http.Server{
 		Addr:           endPoint,
 		Handler:        routersInit,

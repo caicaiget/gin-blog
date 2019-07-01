@@ -14,6 +14,10 @@ type mapIter struct {
 	values bool
 }
 
+func (t *mapIter) ValidKV() (r bool) {
+	return true
+}
+
 func (t *mapIter) Next() (r bool) {
 	return t.t.Next()
 }
@@ -31,8 +35,8 @@ func (t *mapIter) Value() (r reflect.Value) {
 
 func (t *mapIter) Done() {}
 
-func mapRange(m, k, v reflect.Value, values bool) *mapIter {
-	return &mapIter{
+func mapRange(t *mapIter, m, k, v reflect.Value, values bool) {
+	*t = mapIter{
 		m:      m,
 		t:      m.MapRange(),
 		values: values,

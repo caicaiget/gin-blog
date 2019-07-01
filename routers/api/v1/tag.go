@@ -43,14 +43,14 @@ func GetTags(c *gin.Context) {
 }
 
 
-// @Summary 新增文章标签
-// @Produce  json
-// @Param name query string true "Name"
-// @Param state query int false "State"
-// @Param created_by query int false "CreatedBy"
+// @Summary Get multiple article tags
+// @Produce json
+// @Param name query string false "name"
+// @Param state query int false "state"
+// @Param state query int false "createdBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
-// @Router /api/v1/tags [post]
-//新增文章标签
+// @Failure 500 {string} json "{"code":500,"data":{},"msg":"error"}"
+// @Router /api/v1/tags [get]
 func AddTag(c *gin.Context) {
 	name := c.Query("name")
 	state := com.StrTo(c.DefaultQuery("state", "1")).MustInt()
