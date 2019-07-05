@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"gin-blog/models"
 	"gin-blog/pkg/e"
 	"gin-blog/pkg/util"
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,9 @@ func JWT() gin.HandlerFunc {
 			code = e.ErrorAuthCheckTokenFail
 		} else if time.Now().Unix() > claims.ExpiresAt {
 			code = e.ErrorAuthCheckTokenTimeout
+		}else {
+			user := models.GetUserById(claims.UserId)
+			c.Set("user", user)
 		}
 
 		if code != e.SUCCESS {

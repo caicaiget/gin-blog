@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
+	"log"
 	"time"
 )
 
@@ -12,10 +13,10 @@ type Tag struct {
 	CreatedBy  string `json:"createdBy"`
 	ModifiedBy string `json:"modifiedBy"`
 	State      int    `json:"state"`
-	//IsDeleted  int    `json:"isDeleted"`
 }
 
 func GetTags(pageNum int, pageSize int, maps interface{}) (tags []Tag) {
+	log.Println(maps)
 	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags)
 	return
 }

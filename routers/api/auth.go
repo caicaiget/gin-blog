@@ -11,19 +11,22 @@ import (
 )
 
 type Auth struct {
-	Username string `form:"username" valid:"Required; MaxSize(50)"`
-	Password string `form:"password" valid:"Required; MaxSize(50)"`
+	Username string `json:"username" valid:"required"`
+	Password string `json:"password" valid:"required"`
 }
+
 
 func GetAuth(c *gin.Context) {
 	var auth Auth
+	//var validate *validator.Validate
+	//validate = validator.New()
 	err := c.ShouldBindJSON(&auth)
-
+	//err = binding.Validator.ValidateStruct(&auth)
 	code := e.InvalidParams
 	if err == nil {
-		isExist := models.CheckAuth(auth.Username, auth.Password)
+		isExist, id := models.CheckAuth(auth.Username, auth.Password)
 		if isExist {
-			token, err := util.GenerateToken(auth.Username, auth.Password)
+			token, err := util.GenerateToken(auth.Username, id)
 			if err != nil {
 				code = e.ErrorAuth
 			} else {

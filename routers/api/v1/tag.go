@@ -1,10 +1,8 @@
 package v1
 
 import (
-	"fmt"
 	"gin-blog/models"
 	"gin-blog/pkg/e"
-	"gin-blog/pkg/setting"
 	"gin-blog/pkg/util"
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
@@ -14,7 +12,6 @@ import (
 
 //获取多个文章标签
 func GetTags(c *gin.Context) {
-	fmt.Println(c)
 	name := c.Query("name")
 
 	maps := make(map[string]interface{})
@@ -31,8 +28,8 @@ func GetTags(c *gin.Context) {
 	}
 
 	code := e.SUCCESS
-
-	data["lists"] = models.GetTags(util.GetPage(c), setting.PageSize, maps)
+	pageNum, pageSize := util.GetPage(c)
+	data["lists"] = models.GetTags(pageNum, pageSize, maps)
 	data["total"] = models.GetTagTotal(maps)
 
 	c.JSON(http.StatusOK, gin.H{
