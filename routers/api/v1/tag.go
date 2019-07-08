@@ -8,6 +8,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"reflect"
 )
 
 //获取多个文章标签
@@ -51,13 +52,12 @@ func GetTags(c *gin.Context) {
 func AddTag(c *gin.Context) {
 	name := c.Query("name")
 	state := com.StrTo(c.DefaultQuery("state", "1")).MustInt()
-	createdBy := c.Query("createdBy")
+	user, _ := c.Get("user")
+	userId := com.StrTo(reflect.ValueOf(user).FieldByName("ID").String()).MustInt()
 
 	valid := validation.Validation{}
 	valid.Required(name, "name").Message("名称不能为空")
 	valid.MaxSize(name, 100, "name").Message("名称最长为100字符")
-	valid.Required(createdBy, "created_by").Message("创建人不能为空")
-	valid.MaxSize(createdBy, 100, "created_by").Message("创建人最长为100字符")
 	valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
 
 	if valid.HasErrors() {
@@ -74,7 +74,7 @@ func AddTag(c *gin.Context) {
 		return
 	}
 
-	if tag, err := models.AddTag(name, state, createdBy); err != nil {
+	if tag, err := models.AddTag(name, state, userId); err != nil {
 		c.JSON(e.ERROR, gin.H{
 			"msg": err,
 		})

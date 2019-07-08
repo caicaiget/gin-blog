@@ -8,7 +8,7 @@ type Article struct {
 	Title string
 	Desc string
 	CreatedBy  int
-	ModifiedBy string
+	ModifiedBy int
 	Content string
 	State int
 }

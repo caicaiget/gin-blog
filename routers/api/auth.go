@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"log"
 	"net/http"
 
@@ -18,10 +19,8 @@ type Auth struct {
 
 func GetAuth(c *gin.Context) {
 	var auth Auth
-	//var validate *validator.Validate
-	//validate = validator.New()
 	err := c.ShouldBindJSON(&auth)
-	//err = binding.Validator.ValidateStruct(&auth)
+	err = binding.Validator.ValidateStruct(&auth)
 	code := e.InvalidParams
 	if err == nil {
 		isExist, id := models.CheckAuth(auth.Username, auth.Password)

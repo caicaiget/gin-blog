@@ -3,9 +3,9 @@ CREATE TABLE `blog_tag` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT '' COMMENT '标签名称',
   `created_on` datetime(0) COMMENT '创建时间',
-  `created_by` varchar(100) DEFAULT '' COMMENT '创建人',
+  `created_by` int COMMENT '创建人',
   `modified_on` datetime(0) DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `modified_by` varchar(100) DEFAULT '' COMMENT '修改人',
+  `modified_by` int COMMENT '修改人',
   `is_deleted` tinyint(1) unsigned DEFAULT '0',
   `state` tinyint(1) unsigned DEFAULT '1' COMMENT '状态 0为禁用、1为启用',
   PRIMARY KEY (`id`)
@@ -19,11 +19,11 @@ CREATE TABLE `blog_article` (
   `title` varchar(100) DEFAULT '' COMMENT '文章标题',
   `desc` varchar(255) DEFAULT '' COMMENT '简述',
   `content` text,
-  `created_on` int(11) DEFAULT NULL,
-  `created_by` varchar(100) DEFAULT '' COMMENT '创建人',
+  `created_on` datetime(0),
+  `created_by` int COMMENT '创建人',
   `modified_on` datetime(0) DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `modified_by` varchar(255) DEFAULT '' COMMENT '修改人',
-  `deleted_on` int(10) unsigned DEFAULT '0',
+  `modified_by` int COMMENT '修改人',
+  `is_deleted` int(10) unsigned DEFAULT '0',
   `state` tinyint(3) unsigned DEFAULT '1' COMMENT '状态 0为禁用1为启用',
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic COMMENT='文章管理';

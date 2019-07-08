@@ -10,8 +10,8 @@ type Tag struct {
 	Model
 
 	Name       string `json:"name"`
-	CreatedBy  string `json:"createdBy"`
-	ModifiedBy string `json:"modifiedBy"`
+	CreatedBy  int `json:"createdBy"`
+	ModifiedBy int `json:"modifiedBy"`
 	State      int    `json:"state"`
 }
 
@@ -35,7 +35,7 @@ func ExistTagByName(name string) bool {
 	return false
 }
 
-func AddTag(name string, state int, createBy string) (tag Tag, err error) {
+func AddTag(name string, state int, createBy int) (tag Tag, err error) {
 	tag = Tag{
 		Name:      name,
 		State:     state,

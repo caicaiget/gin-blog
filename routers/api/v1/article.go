@@ -4,16 +4,20 @@ import (
 	"gin-blog/models"
 	"gin-blog/pkg/e"
 	"gin-blog/pkg/util"
+	"github.com/Unknwon/com"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"log"
 	"net/http"
 	"reflect"
 )
 
 type ArticleJson struct {
-	Title string `form:"title"`
-	Desc string `form:"desc"`
-	Text string `form:"text"`
+	Title string `json:"title" valid:"required,maxsize(16)"`
+	Desc string `json:"desc" valid:"maxsize(16)"`
+	Text string `json:"text" valid:"required"`
+	CreatedBy int
+	ModifyBy int
 }
 
 func GetArticles(c *gin.Context) {
@@ -37,10 +41,18 @@ func GetArticles(c *gin.Context) {
 }
 
 func CreateArticle(c *gin.Context) {
-	//user, _ := c.Get("user")
-	//userId := reflect.ValueOf(user).FieldByName("ID").Int()
+	user, _ := c.Get("user")
+	userId := com.StrTo(reflect.ValueOf(user).FieldByName("ID").String()).MustInt()
 	var articleJson ArticleJson
-	err := c.ShouldBindJSON(&articleJson)
+	okJson := c.ShouldBindJSON(&articleJson)
+	if okJson != nil {
+		c.JSON(e.InvalidParams, gin.H{
+			"msg": "you need Content-Type=json",
+		})
+	}
+	articleJson.CreatedBy = userId
+	articleJson.ModifyBy = userId
+	err := binding.Validator.ValidateStruct(articleJson)
 	if err != nil {
 		log.Println(err)
 		c.JSON(e.InvalidParams, gin.H{
