@@ -47,7 +47,7 @@ func CreateArticle(c *gin.Context) {
 	okJson := c.ShouldBindJSON(&articleJson)
 	if okJson != nil {
 		c.JSON(e.InvalidParams, gin.H{
-			"msg": "you need Content-Type=json",
+			"msg": "Content-Type must be json",
 		})
 	}
 	articleJson.CreatedBy = userId

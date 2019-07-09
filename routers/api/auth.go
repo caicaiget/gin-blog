@@ -1,51 +1,56 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"log"
-	"net/http"
-
 	"gin-blog/models"
 	"gin-blog/pkg/e"
 	"gin-blog/pkg/util"
+	"github.com/astaxie/beego/validation"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type Auth struct {
-	Username string `json:"username" valid:"required"`
-	Password string `json:"password" valid:"required"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 
 func GetAuth(c *gin.Context) {
 	var auth Auth
-	err := c.ShouldBindJSON(&auth)
-	err = binding.Validator.ValidateStruct(&auth)
-	code := e.InvalidParams
-	if err == nil {
-		isExist, id := models.CheckAuth(auth.Username, auth.Password)
-		if isExist {
-			token, err := util.GenerateToken(auth.Username, id)
-			if err != nil {
-				code = e.ErrorAuth
-			} else {
-				code = e.SUCCESS
-				http.SetCookie(c.Writer, &http.Cookie {
-					Name: "authorization",
-					Value:token,
-				})
-			}
+	_ = c.ShouldBindJSON(&auth)
 
-		} else {
-			code = e.ErrorAuth
-		}
-	} else {
-		log.Println(err)
+	valid := validation.Validation{}
+	valid.Required(auth.Username, "username").Message("username must be")
+	valid.Required(auth.Password, "password").Message("password must be")
+	if valid.HasErrors() {
+		c.JSON(e.InvalidParams, gin.H{
+			"msg": valid.Errors[0].Message,
+		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": auth,
-	})
+	isExist, id := models.CheckAuth(auth.Username, auth.Password)
+	if !isExist {
+		c.JSON(e.ErrorAuth, gin.H{
+			"msg": "Incorrect account or password",
+		})
+		return
+	}
+
+	token, err := util.GenerateToken(auth.Username, id)
+	if err != nil {
+		c.JSON(e.ErrorAuth, gin.H{
+			"msg": err,
+		})
+		return
+	} else {
+		http.SetCookie(c.Writer, &http.Cookie{
+			Name:  "authorization",
+			Value: token,
+		})
+		c.JSON(e.SUCCESS, gin.H{
+			"msg": "success",
+		})
+	}
 }
+
+

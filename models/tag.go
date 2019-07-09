@@ -10,18 +10,18 @@ type Tag struct {
 	Model
 
 	Name       string `json:"name"`
-	CreatedBy  int `json:"createdBy"`
-	ModifiedBy int `json:"modifiedBy"`
-	State      int    `json:"state"`
+	CreatedBy  int64 `json:"createdBy"`
+	ModifiedBy int64 `json:"modifiedBy"`
+	State      int64    `json:"state"`
 }
 
-func GetTags(pageNum int, pageSize int, maps interface{}) (tags []Tag) {
+func GetTags(pageNum int64, pageSize int64, maps interface{}) (tags []Tag) {
 	log.Println(maps)
 	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags)
 	return
 }
 
-func GetTagTotal(maps interface{}) (count int) {
+func GetTagTotal(maps interface{}) (count int64) {
 	db.Model(&Tag{}).Where(maps).Count(&count)
 	return
 }
@@ -35,13 +35,14 @@ func ExistTagByName(name string) bool {
 	return false
 }
 
-func AddTag(name string, state int, createBy int) (tag Tag, err error) {
-	tag = Tag{
+func AddTag(name string, state int64, createBy int64) (tag *Tag, err error) {
+	tag = &Tag{
 		Name:      name,
 		State:     state,
 		CreatedBy: createBy,
+		ModifiedBy: createBy,
 	}
-	err = db.Create(&tag).Error
+	err = db.Create(tag).Error
 	return
 }
 
@@ -57,7 +58,7 @@ func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
 	return nil
 }
 
-func ExistTagByID(id int) bool {
+func ExistTagByID(id int64) bool {
 	var tag Tag
 	db.Select("id").Where("id = ?", id).First(&tag)
 	if tag.ID > 0 {
@@ -67,13 +68,14 @@ func ExistTagByID(id int) bool {
 	return false
 }
 
-func DeleteTag(id int) bool {
+func DeleteTag(id int64) bool {
 	db.Model(&Tag{}).Where("id = ?", id).UpdateColumn("is_deleted", gorm.Expr("?", 1))
 	return true
 }
 
-func EditTag(id int, data interface{}) bool {
-	db.Model(&Tag{}).Where("id = ?", id).Updates(data)
-
-	return true
+func EditTag(id int64, data interface{}) (*Tag, error) {
+	var tag Tag
+	err := db.Model(&tag).Where("id = ?", id).Updates(data).Error
+	log.Println(tag)
+	return &tag, err
 }

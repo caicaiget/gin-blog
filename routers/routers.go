@@ -1,14 +1,13 @@
 package routers
 
 import (
+	"gin-blog/middleware"
 	"gin-blog/middleware/jwt"
 	"gin-blog/pkg/setting"
-	"gin-blog/pkg/util"
 	"gin-blog/routers/api"
 	"gin-blog/routers/api/v1"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
@@ -19,7 +18,7 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Logger())
 
 	r.Use(gin.Recovery())
-
+	r.Use(middleware.JsonAccept())
 	gin.SetMode(setting.RunMode)
 	r.POST("/api/auth", api.GetAuth)
 	ginConfig := ginSwagger.Config{}
@@ -27,8 +26,7 @@ func InitRouter() *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.CustomWrapHandler(&ginConfig, swaggerFiles.Handler))
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT())
-
-	binding.Validator = &util.MyValidator{}
+	//binding.Validator = &util.MyValidator{}
 	r.Use(cors.Default())
 	{
 		//获取标签列表

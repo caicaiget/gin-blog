@@ -17,7 +17,7 @@ type Article struct {
 //
 //}
 
-func GetArticles(pageNum int, pageSize int, userId interface{}) ([]Article, error) {
+func GetArticles(pageNum int64, pageSize int64, userId interface{}) ([]Article, error) {
 	var articles []Article
 	// 查询多条
 	err := db.Preload("Tag").Offset(pageNum).Limit(pageSize).

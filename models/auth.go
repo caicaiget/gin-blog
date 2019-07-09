@@ -1,12 +1,12 @@
 package models
 
 type Auth struct {
-	ID int `gorm:"primary_key" json:"id"`
+	ID int64 `gorm:"primary_key" json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-func CheckAuth(username, password string) (bool, int) {
+func CheckAuth(username, password string) (bool, int64) {
 	var auth Auth
 	db.Select("id").Where(Auth{Username : username, Password : password}).First(&auth)
 	if auth.ID > 0 {
@@ -16,7 +16,7 @@ func CheckAuth(username, password string) (bool, int) {
 	return false, auth.ID
 }
 
-func GetUserById(id int) (auth Auth) {
+func GetUserById(id int64) (auth Auth) {
 	db.Where("id = ?", id).First(&auth)
 	return
 }

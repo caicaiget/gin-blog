@@ -14,7 +14,7 @@ import (
 var db *gorm.DB
 
 type Model struct {
-	ID         int    `gorm:"primary_key" json:"id"`
+	ID         int64    `gorm:"primary_key" json:"id"`
 	CreatedOn  string `json:"createdOn"`
 	ModifiedOn string `json:"modifiedOn"`
 }
