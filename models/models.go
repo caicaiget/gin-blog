@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+	"gin-blog/pkg/constant"
+	"gin-blog/pkg/util"
 	"log"
 	"time"
 
@@ -55,27 +57,44 @@ func init() {
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
 	db.LogMode(true)
+	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeForCreateCallback)
+	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeForUpdateCallback)
 }
 
-func CloseDB() {
-	defer db.Close()
-}
+//func CloseDB() {
+//	defer db.Close()
+//}
 
 
-func updateTimeStampForCreateCallback(scope *gorm.Scope) {
+func updateTimeForCreateCallback(scope *gorm.Scope) {
 	if !scope.HasError() {
-		nowTime := time.Now().Unix()
+		nowTime := time.Now().Format(constant.TimeFormat)
+		var err error
 		if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
 			if createTimeField.IsBlank {
-				createTimeField.Set(nowTime)
+				err = createTimeField.Set(nowTime)
 			}
 		}
 
 		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
 			if modifyTimeField.IsBlank {
-				modifyTimeField.Set(nowTime)
+				err = modifyTimeField.Set(nowTime)
 			}
 		}
+		log.Println(err)
+	}
+}
+
+func updateTimeForUpdateCallback(scope *gorm.Scope) {
+	if !scope.HasError() {
+		nowTime := util.JsonTime(time.Now())
+		var err error
+		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
+			if modifyTimeField.IsBlank {
+				err = modifyTimeField.Set(nowTime)
+			}
+		}
+		log.Println(err)
 	}
 }
 

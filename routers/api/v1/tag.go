@@ -6,9 +6,9 @@ import (
 	"gin-blog/pkg/util"
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
+	"github.com/b3log/gulu"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"reflect"
 )
 
 type Tag struct {
@@ -19,6 +19,8 @@ type Tag struct {
 //获取多个文章标签
 func GetTags(c *gin.Context) {
 	name := c.Query("name")
+	result := gulu.Ret.NewResult()
+	defer c.JSON(http.StatusOK, result)
 
 	maps := make(map[string]interface{})
 	data := make(map[string]interface{})
@@ -33,16 +35,12 @@ func GetTags(c *gin.Context) {
 		maps["state"] = state
 	}
 
-	code := e.SUCCESS
 	pageNum, pageSize := util.GetPage(c)
 	data["lists"] = models.GetTags(pageNum, pageSize, maps)
 	data["total"] = models.GetTagTotal(maps)
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": data,
-	})
+	result.Code = e.SUCCESS
+	result.Data = data
 }
 
 
@@ -57,8 +55,7 @@ func GetTags(c *gin.Context) {
 func AddTag(c *gin.Context) {
 	var tag Tag
 	_ = c.ShouldBindJSON(&tag)
-	user, _ := c.Get("user")
-	userId := reflect.ValueOf(user).FieldByName("ID").Int()
+	user := util.GetUser(c)
 
 	valid := validation.Validation{}
 	valid.Required(tag.Name, "name").Message("名称不能为空")
@@ -79,7 +76,7 @@ func AddTag(c *gin.Context) {
 		return
 	}
 
-	if tag, err := models.AddTag(tag.Name, tag.State, userId); err != nil {
+	if tag, err := models.AddTag(tag.Name, tag.State, user.UserId); err != nil {
 		c.JSON(e.ERROR, gin.H{
 			"msg": err,
 		})
@@ -95,8 +92,7 @@ func EditTag(c *gin.Context) {
 	id := com.StrTo(c.Param("id")).MustInt64()
 	var tag Tag
 	_ = c.ShouldBindJSON(&tag)
-	user, _ := c.Get("user")
-	userId := reflect.ValueOf(user).FieldByName("ID").Int()
+	user := util.GetUser(c)
 
 	valid := validation.Validation{}
 
@@ -105,8 +101,8 @@ func EditTag(c *gin.Context) {
 	if state != -1 {
 		valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
 	}
-	valid.Required(id, "id").Message("ID不能为空")
-	valid.MaxSize(tag.Name, 100, "name").Message("名称最长为100字符")
+	valid.Required(id, "id").Message("id不能为空")
+	valid.MaxSize(tag.Name, 16, "name").Message("name最长为16字符")
 
 	if valid.HasErrors() {
 		c.JSON(e.InvalidParams, gin.H{
@@ -123,7 +119,7 @@ func EditTag(c *gin.Context) {
 	}
 
 	data := make(map[string]interface{})
-	data["modified_by"] = userId
+	data["modified_by"] = user.UserId
 	if tag.Name != "" {
 		data["name"] = tag.Name
 	}
@@ -139,8 +135,6 @@ func EditTag(c *gin.Context) {
 			"data": tag,
 		})
 	}
-
-
 }
 
 //删除文章标签
@@ -150,19 +144,22 @@ func DeleteTag(c *gin.Context) {
 	valid := validation.Validation{}
 	valid.Min(id, 1, "id").Message("ID必须大于0")
 
-	code := e.InvalidParams
-	if !valid.HasErrors() {
-		code = e.SUCCESS
-		if models.ExistTagByID(id) {
-			models.DeleteTag(id)
-		} else {
-			code = e.ErrorNotExistTag
-		}
+	if valid.HasErrors() {
+		c.JSON(e.InvalidParams, gin.H{
+			"msg": valid.Errors[0].Message,
+		})
+		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": make(map[string]string),
-	})
+	if models.ExistTagByID(id) {
+		models.DeleteTag(id)
+		c.JSON(e.SUCCESS, gin.H{
+			"msg": "success",
+		})
+		return
+	} else {
+		c.JSON(e.InvalidParams, gin.H{
+			"msg": "The Tag don't exist",
+		})
+		return
+	}
 }

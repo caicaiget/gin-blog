@@ -44,11 +44,12 @@ func GetAuth(c *gin.Context) {
 		return
 	} else {
 		http.SetCookie(c.Writer, &http.Cookie{
-			Name:  "authorization",
+			Name:  "Authorization",
 			Value: token,
 		})
 		c.JSON(e.SUCCESS, gin.H{
-			"msg": "success",
+			"username": auth.Username,
+			"id": id,
 		})
 	}
 }

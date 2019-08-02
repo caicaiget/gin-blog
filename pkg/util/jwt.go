@@ -1,8 +1,10 @@
 package util
 
 import (
+	"encoding/json"
 	"gin-blog/pkg/setting"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	"time"
 )
 
@@ -13,6 +15,27 @@ type Claims struct {
 	UserId int64
 	jwt.StandardClaims
 }
+
+func (claims *Claims) SetUser(c *gin.Context) (err error) {
+	claimsData, err := json.Marshal(claims)
+	c.Set("user", string(claimsData))
+	return
+}
+
+func GetUser(c *gin.Context) *Claims {
+	userData, _ := c.Get("user")
+	user :=  &Claims{}
+
+	if userData == nil {
+		return user
+	}
+	err := json.Unmarshal([]byte(userData.(string)), user)
+	if err != nil {
+		return user
+	}
+	return user
+}
+
 
 func GenerateToken(username string, id int64) (string, error) {
 	nowTime := time.Now()

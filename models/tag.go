@@ -69,7 +69,7 @@ func ExistTagByID(id int64) bool {
 }
 
 func DeleteTag(id int64) bool {
-	db.Model(&Tag{}).Where("id = ?", id).UpdateColumn("is_deleted", gorm.Expr("?", 1))
+	db.Exec("Update blog_article set is_deleted = 1 where id = ?", id)
 	return true
 }
 

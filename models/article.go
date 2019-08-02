@@ -4,18 +4,14 @@ type Article struct {
 	Model
 
 	Tag Tag
-	TagId int
-	Title string
-	Desc string
-	CreatedBy  int
-	ModifiedBy int
-	Content string
-	State int
+	TagId int64 `json:"tagId"`
+	Title string `json:"title" valid:"Required;MaxSize(16)"`
+	Desc string `json:"desc" valid:"MaxSize(16)"`
+	Content string `json:"content" valid:"Required"`
+	State int64 `json:"state"`
+	CreatedBy  int64
+	ModifiedBy int64
 }
-
-//func (article *Article) ModelFields() []interface{} {
-//
-//}
 
 func GetArticles(pageNum int64, pageSize int64, userId interface{}) ([]Article, error) {
 	var articles []Article
@@ -48,4 +44,22 @@ func GetArticleCount(userId interface{}) (count int, err error) {
 func CreateArticle(article *Article) (*Article, error) {
 	err := db.Create(article).Error
 	return article, err
+}
+
+func GetArticleById(id int64) (article Article, ok bool) {
+	db.Find(&article, "id = ?", id).Related(&article.Tag, "TagId")
+	if article.ID > 0{
+		return article, true
+	}
+	return article, false
+}
+
+func EditArticle(article *Article) (Article, error) {
+	err := db.Save(article).Error
+	return *article, err
+}
+
+func DeleteArticle(id int64) bool {
+	db.Exec("Update blog_article set is_deleted = 1 where id = ?", id)
+	return true
 }

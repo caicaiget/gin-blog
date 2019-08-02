@@ -1,8 +1,6 @@
 package jwt
 
 import (
-	"gin-blog/models"
-	"gin-blog/pkg/e"
 	"gin-blog/pkg/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -11,32 +9,39 @@ import (
 
 func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var code int
-		var data interface{}
 
-		code = e.SUCCESS
-		token, err := c.Cookie("authorization")
+		token, err := c.Cookie("Authorization")
 		if err != nil {
-			code = e.ErrorAuthCheckTokenFail
-		}
-		if claims, err := util.ParseToken(token); err != nil{
-			code = e.ErrorAuthCheckTokenFail
-		} else if time.Now().Unix() > claims.ExpiresAt {
-			code = e.ErrorAuthCheckTokenTimeout
-		}else {
-			user := models.GetUserById(claims.UserId)
-			c.Set("user", user)
-		}
-
-		if code != e.SUCCESS {
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"code" : code,
-				"msg" : e.GetMsg(code),
-				"data" : data,
+				"msg" : "你还没有登录！",
 			})
 			c.Abort()
 			return
 		}
+		if claims, err := util.ParseToken(token); err != nil{
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"msg" : "错误的token请登录！",
+			})
+			c.Abort()
+			return
+		} else if time.Now().Unix() > claims.ExpiresAt {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"msg" : "登录token过期，请重新登录！",
+			})
+			c.Abort()
+			return
+		}else {
+			//user := models.GetUserById(claims.UserId)
+			err = claims.SetUser(c)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"msg" : err,
+				})
+				c.Abort()
+				return
+			}
+		}
+
 		c.Next()
 	}
 }
