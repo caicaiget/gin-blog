@@ -25,25 +25,25 @@ func InitRouter() *gin.Engine {
 	ginConfig := ginSwagger.Config{}
 	ginConfig.URL = "doc.json"
 	r.GET("/swagger/*any", ginSwagger.CustomWrapHandler(&ginConfig, swaggerFiles.Handler))
-	apiv1 := r.Group("/api/v1")
-	//apiv2 := r.Group("/api/v1")
-	//apiv2.GET("/articles", v1.GetArticles)
-	apiv1.Use(jwt.JWT())
-	//binding.Validator = &util.MyValidator{}
+	unionApi := r.Group("/api/v1")
 	{
-		//获取标签列表
-		apiv1.GET("/tags", v1.GetTags)
-		//新建标签
-		apiv1.POST("/tags", v1.AddTag)
-		//更新指定标签
-		apiv1.PUT("/tags/:id", v1.EditTag)
-		//删除指定标签
-		apiv1.DELETE("/tags/:id", v1.DeleteTag)
-		apiv1.GET("/articles", v1.GetArticles)
-		apiv1.POST("/articles", v1.CreateArticle)
-		apiv1.PUT("/articles/:id", v1.UpdateArticle)
-		apiv1.DELETE("/articles/:id", v1.DeleteArticle)
+		// 上传文件
+		unionApi.POST("/upload", api.Upload)
+		unionApi.GET("/:user/articles", v1.GetArticles)
+		unionApi.GET("/:user/tags", v1.GetTags)
 	}
-
+	loginApi := r.Group("/api/v1")
+	loginApi.Use(jwt.JWT())
+	{
+		//新建标签
+		loginApi.POST("/tags", v1.AddTag)
+		//更新指定标签
+		loginApi.PUT("/tags/:id", v1.EditTag)
+		//删除指定标签
+		loginApi.DELETE("/tags/:id", v1.DeleteTag)
+		loginApi.POST("/articles", v1.CreateArticle)
+		loginApi.PUT("/articles/:id", v1.UpdateArticle)
+		loginApi.DELETE("/articles/:id", v1.DeleteArticle)
+	}
 	return r
 }

@@ -2,9 +2,9 @@ package api
 
 import (
 	"gin-blog/models"
-	"gin-blog/pkg/e"
 	"gin-blog/pkg/util"
 	"github.com/astaxie/beego/validation"
+	"github.com/b3log/gulu"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,8 +14,10 @@ type Auth struct {
 	Password string `json:"password"`
 }
 
-
 func GetAuth(c *gin.Context) {
+	result := gulu.Ret.NewResult()
+	result.Code = http.StatusOK
+	defer c.JSON(http.StatusOK, result)
 	var auth Auth
 	_ = c.ShouldBindJSON(&auth)
 
@@ -23,35 +25,34 @@ func GetAuth(c *gin.Context) {
 	valid.Required(auth.Username, "username").Message("username must be")
 	valid.Required(auth.Password, "password").Message("password must be")
 	if valid.HasErrors() {
-		c.JSON(e.InvalidParams, gin.H{
-			"msg": valid.Errors[0].Message,
-		})
+		result.Code = http.StatusNotFound
+		result.Msg = valid.Errors[0].Message
+		return
 	}
 
 	isExist, id := models.CheckAuth(auth.Username, auth.Password)
 	if !isExist {
-		c.JSON(e.ErrorAuth, gin.H{
-			"msg": "Incorrect account or password",
-		})
+		result.Code = http.StatusNotFound
+		result.Msg = "Incorrect account or password"
 		return
 	}
 
 	token, err := util.GenerateToken(auth.Username, id)
 	if err != nil {
-		c.JSON(e.ErrorAuth, gin.H{
-			"msg": err,
-		})
-		return
+		result.Code = http.StatusNotFound
+		result.Msg = err.Error()
 	} else {
 		http.SetCookie(c.Writer, &http.Cookie{
 			Name:  "Authorization",
 			Value: token,
 		})
-		c.JSON(e.SUCCESS, gin.H{
+		result.Data = gin.H{
 			"username": auth.Username,
-			"id": id,
-		})
+			"id":       id,
+		}
 	}
 }
 
+func GetLoginUser(c *gin.Context) {
 
+}

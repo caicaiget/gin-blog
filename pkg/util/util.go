@@ -1,12 +1,13 @@
 package util
 
 import (
-	"gin-blog/pkg/e"
+	"errors"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"reflect"
 	"strings"
 )
+
 
 func GenerateErrors(obj interface{}, errors []*validation.Error, bindString string) (errs []string) {
 	if len(errors) == 0 {
@@ -25,23 +26,16 @@ func GenerateErrors(obj interface{}, errors []*validation.Error, bindString stri
 	return
 }
 
-func ValidStructure(obj interface{}, c *gin.Context) bool {
+func ValidStructure(obj interface{}, c *gin.Context) (err error) {
 	valid := validation.Validation{}
 	ok, err := valid.Valid(obj)
 	if err != nil {
-		c.JSON(e.ERROR, gin.H{
-			"msg": err,
-		})
-		return false
+		return err
 	}
 
 	if !ok {
 		errs := GenerateErrors(obj, valid.Errors, "json")
-		c.JSON(e.InvalidParams, gin.H{
-			"msg": strings.Join(errs, ", "),
-		})
-		c.Abort()
-		return false
+		return errors.New(strings.Join(errs, ", "))
 	}
-	return true
+	return nil
 }

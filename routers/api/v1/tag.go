@@ -2,7 +2,6 @@ package v1
 
 import (
 	"gin-blog/models"
-	"gin-blog/pkg/e"
 	"gin-blog/pkg/util"
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
@@ -18,28 +17,22 @@ type Tag struct {
 
 //获取多个文章标签
 func GetTags(c *gin.Context) {
-	name := c.Query("name")
 	result := gulu.Ret.NewResult()
 	defer c.JSON(http.StatusOK, result)
-
-	maps := make(map[string]interface{})
+	userName := c.Param("user")
+	user, ok := models.GetUserByName(userName)
+	if !ok {
+		result.Code = http.StatusNotFound
+		result.Msg = "user not found"
+		return
+	}
 	data := make(map[string]interface{})
 
-	if name != "" {
-		maps["name"] = name
-	}
-
-	var state = 1
-	if arg := c.Query("state"); arg != "" {
-		state = com.StrTo(arg).MustInt()
-		maps["state"] = state
-	}
-
 	pageNum, pageSize := util.GetPage(c)
-	data["lists"] = models.GetTags(pageNum, pageSize, maps)
-	data["total"] = models.GetTagTotal(maps)
+	data["lists"] = models.GetTags(pageNum, pageSize, user.ID)
+	data["total"] = models.GetTagTotal(user.ID)
 
-	result.Code = e.SUCCESS
+	result.Code = http.StatusOK
 	result.Data = data
 }
 
@@ -53,6 +46,8 @@ func GetTags(c *gin.Context) {
 // @Failure 500 {string} json "{"code":500,"data":{},"msg":"error"}"
 // @Router /api/v1/tags [get]
 func AddTag(c *gin.Context) {
+	result := gulu.Ret.NewResult()
+	defer c.JSON(http.StatusOK, result)
 	var tag Tag
 	_ = c.ShouldBindJSON(&tag)
 	user := util.GetUser(c)
@@ -63,32 +58,29 @@ func AddTag(c *gin.Context) {
 	valid.Range(tag.State, 0, 1, "state").Message("状态只允许0或1")
 
 	if valid.HasErrors() {
-		c.JSON(e.InvalidParams, gin.H{
-			"msg": valid.Errors[0].Message,
-		})
+		result.Code = http.StatusNotFound
+		result.Msg = valid.Errors[0].Message
 		return
 	}
-
 	if models.ExistTagByName(tag.Name) {
-		c.JSON(e.InvalidParams, gin.H{
-			"msg": "The Tag name already exists",
-		})
+		result.Code = http.StatusNotFound
+		result.Msg = "The Tag name already exists"
 		return
 	}
 
 	if tag, err := models.AddTag(tag.Name, tag.State, user.UserId); err != nil {
-		c.JSON(e.ERROR, gin.H{
-			"msg": err,
-		})
+		result.Code = http.StatusInternalServerError
+		result.Msg = err.Error()
 	} else {
-		c.JSON(e.SUCCESS, gin.H{
-			"data": tag,
-		})
+		result.Code = http.StatusOK
+		result.Data = tag
 	}
 }
 
 //修改文章标签
 func EditTag(c *gin.Context) {
+	result := gulu.Ret.NewResult()
+	defer c.JSON(http.StatusOK, result)
 	id := com.StrTo(c.Param("id")).MustInt64()
 	var tag Tag
 	_ = c.ShouldBindJSON(&tag)
@@ -96,25 +88,19 @@ func EditTag(c *gin.Context) {
 
 	valid := validation.Validation{}
 
-	var state int64 = -1
-	state = tag.State
-	if state != -1 {
-		valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
-	}
+
 	valid.Required(id, "id").Message("id不能为空")
 	valid.MaxSize(tag.Name, 16, "name").Message("name最长为16字符")
 
 	if valid.HasErrors() {
-		c.JSON(e.InvalidParams, gin.H{
-			"msg":  valid.Errors[0].Message,
-		})
+		result.Code = http.StatusNotFound
+		result.Msg = valid.Errors[0].Message
 		return
 	}
 
 	if !models.ExistTagByID(id) {
-		c.JSON(e.InvalidParams, gin.H{
-			"msg":  "The Tag don't exist",
-		})
+		result.Code = http.StatusNotFound
+		result.Msg = "The Tag don't exist"
 		return
 	}
 
@@ -123,43 +109,37 @@ func EditTag(c *gin.Context) {
 	if tag.Name != "" {
 		data["name"] = tag.Name
 	}
-	if state != -1 {
-		data["state"] = state
-	}
 	if tag, err := models.EditTag(id, data); err != nil {
-		c.JSON(e.ERROR, gin.H{
-			"msg": err,
-		})
+		result.Code = http.StatusInternalServerError
+		result.Msg = err.Error()
 	}else {
-		c.JSON(e.SUCCESS, gin.H{
-			"data": tag,
-		})
+		result.Code = http.StatusOK
+		result.Data = tag
 	}
 }
 
 //删除文章标签
 func DeleteTag(c *gin.Context) {
+	result := gulu.Ret.NewResult()
+	defer c.JSON(http.StatusOK, result)
 	id := com.StrTo(c.Param("id")).MustInt64()
 
 	valid := validation.Validation{}
 	valid.Min(id, 1, "id").Message("ID必须大于0")
 
 	if valid.HasErrors() {
-		c.JSON(e.InvalidParams, gin.H{
-			"msg": valid.Errors[0].Message,
-		})
+		result.Code = http.StatusNotFound
+		result.Msg = valid.Errors[0].Message
 		return
 	}
 	if models.ExistTagByID(id) {
 		models.DeleteTag(id)
-		c.JSON(e.SUCCESS, gin.H{
-			"msg": "success",
-		})
+		result.Data = "success"
+		result.Code = http.StatusOK
 		return
 	} else {
-		c.JSON(e.InvalidParams, gin.H{
-			"msg": "The Tag don't exist",
-		})
+		result.Code = http.StatusInternalServerError
+		result.Msg = "The Tag don't exist"
 		return
 	}
 }

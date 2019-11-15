@@ -2,6 +2,7 @@ package setting
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/go-ini/ini"
@@ -19,6 +20,9 @@ var (
 	PageSize   int
 	JwtSecret  string
 	ExpireTime time.Duration
+
+	BasePath string
+	StaticFilePath string
 )
 
 func init() {
@@ -35,6 +39,7 @@ func init() {
 
 func LoadBase() {
 	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
+	StaticFilePath = Cfg.Section("").Key("StaticFilePath").MustString("/home/caicai/static")
 }
 
 func LoadServer() {
@@ -59,4 +64,8 @@ func LoadApp() {
 	JwtSecret = sec.Key("JWT_SECRET").MustString("!@)*#)!@U#@*!@!)")
 	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
 	ExpireTime = time.Duration(sec.Key("ExpireTime").MustInt(3))
+}
+
+func loadConfig()  {
+	BasePath, _ = os.Getwd()
 }

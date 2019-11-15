@@ -15,14 +15,13 @@ type Tag struct {
 	State      int64    `json:"state"`
 }
 
-func GetTags(pageNum int64, pageSize int64, maps interface{}) (tags []Tag) {
-	log.Println(maps)
-	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags)
+func GetTags(pageNum int64, pageSize int64, userId int64) (tags []Tag) {
+	db.Where("Created_by = ?", userId).Offset(pageNum).Limit(pageSize).Find(&tags)
 	return
 }
 
-func GetTagTotal(maps interface{}) (count int64) {
-	db.Model(&Tag{}).Where(maps).Count(&count)
+func GetTagTotal(userId int64) (count int64) {
+	db.Model(&Tag{}).Where("Created_by = ?", userId).Count(&count)
 	return
 }
 

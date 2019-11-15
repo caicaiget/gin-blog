@@ -16,7 +16,15 @@ func CheckAuth(username, password string) (bool, int64) {
 	return false, auth.ID
 }
 
-func GetUserById(id int64) (auth Auth) {
-	db.Where("id = ?", id).First(&auth)
+func GetUserById(id int64) (user Auth) {
+	db.Where("id = ?", id).First(&user)
 	return
+}
+
+func GetUserByName(name string) (user Auth, ok bool) {
+	db.Where("name = ?", name).First(&user)
+	if user.ID > 0 {
+		return user, true
+	}
+	return user, false
 }
