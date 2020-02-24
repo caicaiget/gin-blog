@@ -57,7 +57,7 @@ var doc = `{
                     "200": {
                         "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
                         "schema": {
-                            "type": "string"
+                            "type": "object"
                         }
                     },
                     "500": {

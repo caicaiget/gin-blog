@@ -3,15 +3,15 @@ package v1
 import (
 	"gin-blog/models"
 	"gin-blog/pkg/util"
-	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/b3log/gulu"
 	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 	"net/http"
 )
 
 type Tag struct {
-	Name string
+	Name  string
 	State int64
 }
 
@@ -35,7 +35,6 @@ func GetTags(c *gin.Context) {
 	result.Code = http.StatusOK
 	result.Data = data
 }
-
 
 // @Summary Get multiple article tags
 // @Produce json
@@ -88,7 +87,6 @@ func EditTag(c *gin.Context) {
 
 	valid := validation.Validation{}
 
-
 	valid.Required(id, "id").Message("id不能为空")
 	valid.MaxSize(tag.Name, 16, "name").Message("name最长为16字符")
 
@@ -112,7 +110,7 @@ func EditTag(c *gin.Context) {
 	if tag, err := models.EditTag(id, data); err != nil {
 		result.Code = http.StatusInternalServerError
 		result.Msg = err.Error()
-	}else {
+	} else {
 		result.Code = http.StatusOK
 		result.Data = tag
 	}

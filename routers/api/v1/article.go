@@ -3,14 +3,13 @@ package v1
 import (
 	"gin-blog/models"
 	"gin-blog/pkg/util"
-	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/b3log/gulu"
 	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 	"log"
 	"net/http"
 )
-
 
 func GetArticles(c *gin.Context) {
 	result := gulu.Ret.NewResult()
@@ -36,7 +35,6 @@ func GetArticles(c *gin.Context) {
 	result.Data = data
 	result.Code = http.StatusOK
 }
-
 
 func CreateArticle(c *gin.Context) {
 	result := gulu.Ret.NewResult()
@@ -66,7 +64,7 @@ func UpdateArticle(c *gin.Context) {
 	defer c.JSON(http.StatusOK, result)
 	var article models.Article
 	articleId := com.StrTo(c.Param("id")).MustInt64()
-	if dbArticle, ok := models.GetArticleById(articleId); !ok{
+	if dbArticle, ok := models.GetArticleById(articleId); !ok {
 		result.Msg = "article 在数据库不存在"
 		return
 	} else {
@@ -78,7 +76,7 @@ func UpdateArticle(c *gin.Context) {
 		result.Code = http.StatusBadRequest
 		return
 	}
-	if article, err := models.EditArticle(&article); err != nil{
+	if article, err := models.EditArticle(&article); err != nil {
 		result.Msg = err.Error()
 		result.Code = http.StatusBadRequest
 	} else {
